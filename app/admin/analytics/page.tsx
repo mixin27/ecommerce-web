@@ -144,7 +144,7 @@ export default function AnalyticsPage() {
             <CardTitle>Stock Distribution</CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={{}}>
+            <ChartContainer config={{}} className="w-full h-[350px]">
               <PieChart>
                 <Pie
                   data={stockDistributionData}
@@ -182,7 +182,7 @@ export default function AnalyticsPage() {
                 No urgent reorders needed
               </div>
             ) : (
-              <ChartContainer config={{}}>
+              <ChartContainer config={{}} className="w-full h-[350px]">
                 <BarChart data={urgentReorders.slice(0, 5)}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis

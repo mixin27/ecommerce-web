@@ -168,7 +168,7 @@ export default function AdminDashboard() {
           <CardTitle>Revenue Overview (Last 30 Days)</CardTitle>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={{}}>
+          <ChartContainer config={{}} className="w-full h-[350px]">
             <LineChart data={revenue}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
