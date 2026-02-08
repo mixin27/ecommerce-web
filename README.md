@@ -43,7 +43,7 @@ A full-featured e-commerce web application built with Next.js 14, TypeScript, Gr
 
 ## Prerequisites
 
-- Node.js 18+
+- Node.js 22+
 - npm or yarn or pnpm
 
 ## Installation
@@ -51,8 +51,8 @@ A full-featured e-commerce web application built with Next.js 14, TypeScript, Gr
 1. Clone the repository:
 
 ```bash
-git clone <repository-url>
-cd ecommerce-nextjs-app
+git clone https://github.com/mixin27/ecommerce-web
+cd ecommerce-web
 ```
 
 2. Install dependencies:
@@ -74,7 +74,7 @@ cp .env.example .env.local
 4. Update the `.env.local` file with your configuration:
 
 ```env
-NEXT_PUBLIC_GRAPHQL_URL=https://ecommerce-api-three-rho.vercel.app/graphql
+NEXT_PUBLIC_GRAPHQL_URL=your_api_url
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_key_here
 ```
 
