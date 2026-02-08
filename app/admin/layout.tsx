@@ -17,6 +17,7 @@ import {
   FileText,
 } from 'lucide-react';
 import { UserRole } from '@/graphql/generated/graphql';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function AdminLayout({
   children,
@@ -24,7 +25,8 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { user, isAuthenticated, logout, _hasHydrated } = useAuthStore();
+  const { user, isAuthenticated, _hasHydrated } = useAuthStore();
+  const { logout } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -44,7 +46,6 @@ export default function AdminLayout({
 
   const handleLogout = () => {
     logout();
-    router.push('/auth/login');
   };
 
   if (isLoading || !_hasHydrated) {

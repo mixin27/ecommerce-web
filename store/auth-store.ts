@@ -1,4 +1,4 @@
-import { UserRole } from '@/graphql/generated/graphql';
+import { LoginMutation, UserRole } from '@/graphql/generated/graphql';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -21,6 +21,7 @@ interface AuthState {
   _hasHydrated: boolean;
   setHasHydrated: (state: boolean) => void;
   setAuth: (user: User, token: string, refreshToken: string) => void;
+  setTokens: (token: string, refreshToken: string) => void;
   logout: () => void;
 }
 
@@ -41,6 +42,13 @@ export const useAuthStore = create<AuthState>()(
           localStorage.setItem('refreshToken', refreshToken);
         }
         set({ user, token, refreshToken, isAuthenticated: true });
+      },
+      setTokens: (token, refreshToken) => {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('token', token);
+          localStorage.setItem('refreshToken', refreshToken);
+        }
+        set({ token, refreshToken });
       },
       logout: () => {
         if (typeof window !== 'undefined') {

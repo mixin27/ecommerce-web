@@ -12,6 +12,7 @@ import {
   GetMyCartQuery,
   UserRole,
 } from '@/graphql/generated/graphql';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function ShopLayout({
   children,
@@ -19,7 +20,8 @@ export default function ShopLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { user, isAuthenticated, logout, _hasHydrated } = useAuthStore();
+  const { user, isAuthenticated, _hasHydrated } = useAuthStore();
+  const { logout } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
 
   const { data: cartData } = useQuery<GetMyCartQuery>(GetMyCartDocument, {
@@ -47,7 +49,6 @@ export default function ShopLayout({
 
   const handleLogout = () => {
     logout();
-    router.push('/auth/login');
   };
 
   if (isLoading || !_hasHydrated) {

@@ -19,9 +19,11 @@ type Documents = {
     "\n  mutation BulkDeleteUsers($userIds: [ID!]!) {\n    bulkDeleteUsers(userIds: $userIds) {\n      success\n      deletedCount\n    }\n  }\n": typeof types.BulkDeleteUsersDocument,
     "\n  query GetUserAddresses {\n    userAddresses {\n      id\n      fullName\n      phone\n      addressLine1\n      addressLine2\n      city\n      state\n      country\n      postalCode\n      isDefault\n    }\n  }\n": typeof types.GetUserAddressesDocument,
     "\n  mutation CreateAddress($userId: ID!, $input: CreateAddressInput!) {\n    createAddress(userId: $userId, input: $input) {\n      id\n      fullName\n      addressLine1\n      city\n      state\n      country\n      postalCode\n    }\n  }\n": typeof types.CreateAddressDocument,
-    "\n  mutation Login($input: LoginAuthInput!) {\n    login(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n      }\n      accessToken\n      refreshToken\n    }\n  }\n": typeof types.LoginDocument,
-    "\n  mutation Register($input: RegisterAuthInput!) {\n    register(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n      }\n      accessToken\n      refreshToken\n    }\n  }\n": typeof types.RegisterDocument,
+    "\n  mutation Login($input: LoginAuthInput!) {\n    login(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n        createdAt\n        updatedAt\n      }\n      accessToken\n      refreshToken\n    }\n  }\n": typeof types.LoginDocument,
+    "\n  mutation Register($input: RegisterAuthInput!) {\n    register(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n        createdAt\n        updatedAt\n      }\n      accessToken\n      refreshToken\n    }\n  }\n": typeof types.RegisterDocument,
     "\n  query Me {\n    me {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.MeDocument,
+    "\n  mutation RefreshToken {\n    refreshToken {\n      accessToken\n      refreshToken\n    }\n  }\n": typeof types.RefreshTokenDocument,
+    "\n  mutation Logout {\n    logout\n  }\n": typeof types.LogoutDocument,
     "\n  query GetMyCart {\n    myCart {\n      id\n      subtotal\n      itemCount\n      items {\n        id\n        quantity\n        product {\n          id\n          name\n          slug\n          price\n          images\n          stock\n        }\n      }\n    }\n  }\n": typeof types.GetMyCartDocument,
     "\n  mutation AddToCart($input: AddToCartInput!) {\n    addToCart(input: $input) {\n      id\n      subtotal\n      itemCount\n      items {\n        id\n        quantity\n        product {\n          id\n          name\n          price\n          images\n        }\n      }\n    }\n  }\n": typeof types.AddToCartDocument,
     "\n  mutation UpdateCartItem($input: UpdateCartItemInput!) {\n    updateCartItem(input: $input) {\n      id\n      subtotal\n      itemCount\n      items {\n        id\n        quantity\n        product {\n          id\n          name\n          price\n          images\n        }\n      }\n    }\n  }\n": typeof types.UpdateCartItemDocument,
@@ -66,9 +68,11 @@ const documents: Documents = {
     "\n  mutation BulkDeleteUsers($userIds: [ID!]!) {\n    bulkDeleteUsers(userIds: $userIds) {\n      success\n      deletedCount\n    }\n  }\n": types.BulkDeleteUsersDocument,
     "\n  query GetUserAddresses {\n    userAddresses {\n      id\n      fullName\n      phone\n      addressLine1\n      addressLine2\n      city\n      state\n      country\n      postalCode\n      isDefault\n    }\n  }\n": types.GetUserAddressesDocument,
     "\n  mutation CreateAddress($userId: ID!, $input: CreateAddressInput!) {\n    createAddress(userId: $userId, input: $input) {\n      id\n      fullName\n      addressLine1\n      city\n      state\n      country\n      postalCode\n    }\n  }\n": types.CreateAddressDocument,
-    "\n  mutation Login($input: LoginAuthInput!) {\n    login(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n      }\n      accessToken\n      refreshToken\n    }\n  }\n": types.LoginDocument,
-    "\n  mutation Register($input: RegisterAuthInput!) {\n    register(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n      }\n      accessToken\n      refreshToken\n    }\n  }\n": types.RegisterDocument,
+    "\n  mutation Login($input: LoginAuthInput!) {\n    login(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n        createdAt\n        updatedAt\n      }\n      accessToken\n      refreshToken\n    }\n  }\n": types.LoginDocument,
+    "\n  mutation Register($input: RegisterAuthInput!) {\n    register(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n        createdAt\n        updatedAt\n      }\n      accessToken\n      refreshToken\n    }\n  }\n": types.RegisterDocument,
     "\n  query Me {\n    me {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n      createdAt\n      updatedAt\n    }\n  }\n": types.MeDocument,
+    "\n  mutation RefreshToken {\n    refreshToken {\n      accessToken\n      refreshToken\n    }\n  }\n": types.RefreshTokenDocument,
+    "\n  mutation Logout {\n    logout\n  }\n": types.LogoutDocument,
     "\n  query GetMyCart {\n    myCart {\n      id\n      subtotal\n      itemCount\n      items {\n        id\n        quantity\n        product {\n          id\n          name\n          slug\n          price\n          images\n          stock\n        }\n      }\n    }\n  }\n": types.GetMyCartDocument,
     "\n  mutation AddToCart($input: AddToCartInput!) {\n    addToCart(input: $input) {\n      id\n      subtotal\n      itemCount\n      items {\n        id\n        quantity\n        product {\n          id\n          name\n          price\n          images\n        }\n      }\n    }\n  }\n": types.AddToCartDocument,
     "\n  mutation UpdateCartItem($input: UpdateCartItemInput!) {\n    updateCartItem(input: $input) {\n      id\n      subtotal\n      itemCount\n      items {\n        id\n        quantity\n        product {\n          id\n          name\n          price\n          images\n        }\n      }\n    }\n  }\n": types.UpdateCartItemDocument,
@@ -145,15 +149,23 @@ export function graphql(source: "\n  mutation CreateAddress($userId: ID!, $input
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation Login($input: LoginAuthInput!) {\n    login(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n      }\n      accessToken\n      refreshToken\n    }\n  }\n"): (typeof documents)["\n  mutation Login($input: LoginAuthInput!) {\n    login(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n      }\n      accessToken\n      refreshToken\n    }\n  }\n"];
+export function graphql(source: "\n  mutation Login($input: LoginAuthInput!) {\n    login(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n        createdAt\n        updatedAt\n      }\n      accessToken\n      refreshToken\n    }\n  }\n"): (typeof documents)["\n  mutation Login($input: LoginAuthInput!) {\n    login(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n        createdAt\n        updatedAt\n      }\n      accessToken\n      refreshToken\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation Register($input: RegisterAuthInput!) {\n    register(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n      }\n      accessToken\n      refreshToken\n    }\n  }\n"): (typeof documents)["\n  mutation Register($input: RegisterAuthInput!) {\n    register(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n      }\n      accessToken\n      refreshToken\n    }\n  }\n"];
+export function graphql(source: "\n  mutation Register($input: RegisterAuthInput!) {\n    register(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n        createdAt\n        updatedAt\n      }\n      accessToken\n      refreshToken\n    }\n  }\n"): (typeof documents)["\n  mutation Register($input: RegisterAuthInput!) {\n    register(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n        createdAt\n        updatedAt\n      }\n      accessToken\n      refreshToken\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query Me {\n    me {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n      createdAt\n      updatedAt\n    }\n  }\n"): (typeof documents)["\n  query Me {\n    me {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n      createdAt\n      updatedAt\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation RefreshToken {\n    refreshToken {\n      accessToken\n      refreshToken\n    }\n  }\n"): (typeof documents)["\n  mutation RefreshToken {\n    refreshToken {\n      accessToken\n      refreshToken\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation Logout {\n    logout\n  }\n"): (typeof documents)["\n  mutation Logout {\n    logout\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

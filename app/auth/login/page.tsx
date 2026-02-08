@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useMutation } from "@apollo/client/react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useAuthStore } from "@/store/auth-store";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useState } from 'react';
+import { useMutation } from '@apollo/client/react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useAuthStore } from '@/store/auth-store';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Card,
   CardContent,
@@ -15,19 +15,19 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   LoginDocument,
   LoginMutation,
   UserRole,
-} from "@/graphql/generated/graphql";
+} from '@/graphql/generated/graphql';
 
 export default function LoginPage() {
   const router = useRouter();
   const { setAuth } = useAuthStore();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const [login, { loading }] = useMutation<LoginMutation>(LoginDocument, {
     onCompleted: (data) => {
@@ -36,19 +36,19 @@ export default function LoginPage() {
 
       // Redirect based on role
       if (user.role === UserRole.SuperAdmin || user.role === UserRole.Admin) {
-        router.push("/admin/dashboard");
+        router.push('/admin/dashboard');
       } else {
-        router.push("/shop");
+        router.push('/shop');
       }
     },
     onError: (error) => {
-      setError(error.message || "Login failed");
+      setError(error.message || 'Login failed');
     },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
 
     try {
       await login({
@@ -57,7 +57,7 @@ export default function LoginPage() {
         },
       });
     } catch (err) {
-      console.error("Login error:", err);
+      console.error('Login error:', err);
     }
   };
 
@@ -101,10 +101,10 @@ export default function LoginPage() {
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Logging in..." : "Login"}
+              {loading ? 'Logging in...' : 'Login'}
             </Button>
             <div className="text-sm text-center text-muted-foreground">
-              Don't have an account?{" "}
+              Don't have an account?{' '}
               <Link
                 href="/auth/register"
                 className="text-primary hover:underline"

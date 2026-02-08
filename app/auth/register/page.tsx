@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useMutation } from "@apollo/client/react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useAuthStore } from "@/store/auth-store";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useState } from 'react';
+import { useMutation } from '@apollo/client/react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useAuthStore } from '@/store/auth-store';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Card,
   CardContent,
@@ -15,22 +15,22 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   RegisterDocument,
   RegisterMutation,
-} from "@/graphql/generated/graphql";
+} from '@/graphql/generated/graphql';
 
 export default function RegisterPage() {
   const router = useRouter();
   const { setAuth } = useAuthStore();
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   });
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const [register, { loading }] = useMutation<RegisterMutation>(
     RegisterDocument,
@@ -38,20 +38,20 @@ export default function RegisterPage() {
       onCompleted: (data) => {
         const { user, accessToken, refreshToken } = data.register;
         setAuth(user, accessToken, refreshToken);
-        router.push("/shop");
+        router.push('/shop');
       },
       onError: (error) => {
-        setError(error.message || "Registration failed");
+        setError(error.message || 'Registration failed');
       },
     },
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+      setError('Passwords do not match');
       return;
     }
 
@@ -66,7 +66,7 @@ export default function RegisterPage() {
         },
       });
     } catch (err) {
-      console.error("Registration error:", err);
+      console.error('Registration error:', err);
     }
   };
 
@@ -140,10 +140,10 @@ export default function RegisterPage() {
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Creating account..." : "Register"}
+              {loading ? 'Creating account...' : 'Register'}
             </Button>
             <div className="text-sm text-center text-muted-foreground">
-              Already have an account?{" "}
+              Already have an account?{' '}
               <Link href="/auth/login" className="text-primary hover:underline">
                 Login
               </Link>

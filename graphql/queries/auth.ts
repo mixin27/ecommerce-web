@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from '@apollo/client';
 
 export const LOGIN_MUTATION = gql`
   mutation Login($input: LoginAuthInput!) {
@@ -10,6 +10,8 @@ export const LOGIN_MUTATION = gql`
         role
         isActive
         emailVerified
+        createdAt
+        updatedAt
       }
       accessToken
       refreshToken
@@ -27,6 +29,8 @@ export const REGISTER_MUTATION = gql`
         role
         isActive
         emailVerified
+        createdAt
+        updatedAt
       }
       accessToken
       refreshToken
@@ -46,5 +50,20 @@ export const ME_QUERY = gql`
       createdAt
       updatedAt
     }
+  }
+`;
+
+export const REFRESH_TOKEN_MUTATION = gql`
+  mutation RefreshToken {
+    refreshToken {
+      accessToken
+      refreshToken
+    }
+  }
+`;
+
+export const LOGOUT_MUTATION = gql`
+  mutation Logout {
+    logout
   }
 `;
