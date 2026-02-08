@@ -16,9 +16,7 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
   Legend,
-  ResponsiveContainer,
   PieChart,
   Pie,
   Cell,
@@ -29,6 +27,11 @@ import {
   GetReorderRecommendationsDocument,
   GetReorderRecommendationsQuery,
 } from '@/graphql/generated/graphql';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
@@ -141,7 +144,7 @@ export default function AnalyticsPage() {
             <CardTitle>Stock Distribution</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
+            <ChartContainer config={{}}>
               <PieChart>
                 <Pie
                   data={stockDistributionData}
@@ -162,9 +165,9 @@ export default function AnalyticsPage() {
                     />
                   ))}
                 </Pie>
-                <Tooltip />
+                <ChartTooltip content={<ChartTooltipContent />} />
               </PieChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           </CardContent>
         </Card>
 
@@ -179,7 +182,7 @@ export default function AnalyticsPage() {
                 No urgent reorders needed
               </div>
             ) : (
-              <ResponsiveContainer width="100%" height={300}>
+              <ChartContainer config={{}}>
                 <BarChart data={urgentReorders.slice(0, 5)}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
@@ -189,15 +192,25 @@ export default function AnalyticsPage() {
                     height={100}
                   />
                   <YAxis />
-                  <Tooltip />
+                  <ChartTooltip content={<ChartTooltipContent />} />
                   <Legend />
+                  <Bar
+                    dataKey="averageDailySales"
+                    fill="#00C49F"
+                    name="Avg Daily Sales"
+                  />
                   <Bar
                     dataKey="daysUntilStockOut"
                     fill="#FF8042"
                     name="Days Until Stock Out"
                   />
+                  <Bar
+                    dataKey="recommendedOrderQuantity"
+                    fill="#0088FE"
+                    name="Recommended Order Quantity"
+                  />
                 </BarChart>
-              </ResponsiveContainer>
+              </ChartContainer>
             )}
           </CardContent>
         </Card>

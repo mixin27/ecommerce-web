@@ -12,9 +12,11 @@ import {
   XCircle,
   MapPin,
   CreditCard,
+  Download,
 } from 'lucide-react';
 import Link from 'next/link';
 import { GetOrderDocument, GetOrderQuery } from '@/graphql/generated/graphql';
+import { generateInvoicePDF } from '@/lib/pdf-generator';
 import { use } from 'react';
 
 export default function OrderDetailPage({
@@ -26,6 +28,39 @@ export default function OrderDetailPage({
   const { data, loading } = useQuery<GetOrderQuery>(GetOrderDocument, {
     variables: { id },
   });
+
+  const handleDownloadInvoice = async () => {
+    if (data?.order) {
+      try {
+        const order = data.order;
+        // Map GraphQL order data to InvoiceData format
+        const invoiceData = {
+          order: {
+            ...order,
+            subtotal: parseFloat(order.subtotal),
+            shippingCost: parseFloat(order.shippingCost),
+            tax: parseFloat(order.tax),
+            discount: parseFloat(order.discount),
+            total: parseFloat(order.total),
+            items: order.items.map((item: any) => ({
+              ...item,
+              price: parseFloat(item.price),
+            })),
+            shippingAddress: {
+              ...order.shippingAddress,
+              addressLine2: order.shippingAddress.addressLine2 || undefined,
+            },
+            user: order.user as any, // Cast user if necessary, or map explicitly
+          },
+        };
+
+        await generateInvoicePDF(invoiceData as any);
+      } catch (error) {
+        console.error('Error generating invoice:', error);
+        alert('Failed to generate invoice. Please try again.');
+      }
+    }
+  };
 
   if (loading) {
     return <div className="text-center py-12">Loading order details...</div>;
@@ -212,6 +247,15 @@ export default function OrderDetailPage({
                     <p className="text-sm text-muted-foreground">
                       ${parseFloat(item.price).toFixed(2)} each
                     </p>
+                    {order.status === 'DELIVERED' && (
+                      <Link
+                        href={`/shop/orders/${order.id}/review/${item.product.id}`}
+                      >
+                        <Button variant="outline" size="sm" className="mt-2">
+                          Write Review
+                        </Button>
+                      </Link>
+                    )}
                   </div>
                   <div className="text-right">
                     <p className="font-bold text-lg">
@@ -330,14 +374,12 @@ export default function OrderDetailPage({
 
           {/* Actions */}
           <div className="space-y-2">
-            {order.status === 'DELIVERED' && (
-              <Button className="w-full">Leave a Review</Button>
-            )}
-            <Button variant="outline" className="w-full">
-              Contact Support
+            <Button className="w-full" onClick={handleDownloadInvoice}>
+              <Download className="w-4 h-4 mr-2" />
+              Download Invoice
             </Button>
             <Button variant="outline" className="w-full">
-              Download Invoice
+              Contact Support
             </Button>
           </div>
         </div>

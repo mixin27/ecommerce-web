@@ -225,7 +225,12 @@ export default function AdminCategoriesPage() {
                     </div>
                   )}
                   <div className="flex space-x-2 pt-2">
-                    <Button variant="outline" size="sm" className="flex-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => {}}
+                    >
                       <Edit className="w-4 h-4 mr-1" />
                       Edit
                     </Button>

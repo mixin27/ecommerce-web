@@ -11,23 +11,18 @@ import {
   TrendingDown,
   AlertTriangle,
 } from 'lucide-react';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-} from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 import {
   GetDashboardStatsDocument,
   GetDashboardStatsQuery,
   GetRevenueDataDocument,
   GetRevenueDataQuery,
-  RevenueData,
 } from '@/graphql/generated/graphql';
-import { ChartContainer } from '@/components/ui/chart';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
 
 export default function AdminDashboard() {
   const { data: statsData, loading: statsLoading } =
@@ -178,7 +173,7 @@ export default function AdminDashboard() {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
               <YAxis />
-              <Tooltip />
+              <ChartTooltip content={<ChartTooltipContent />} />
               <Legend />
               <Line
                 type="monotone"
