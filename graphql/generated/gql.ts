@@ -15,6 +15,8 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  */
 type Documents = {
     "\n  mutation MarkAllNotificationsAsRead {\n    markAllNotificationsAsRead\n  }\n": typeof types.MarkAllNotificationsAsReadDocument,
+    "\n  mutation BulkUpdateUsers($userIds: [ID!]!, $input: BulkUpdateUsersInput!) {\n    bulkUpdateUsers(userIds: $userIds, input: $input) {\n      success\n      updatedCount\n    }\n  }\n": typeof types.BulkUpdateUsersDocument,
+    "\n  mutation BulkDeleteUsers($userIds: [ID!]!) {\n    bulkDeleteUsers(userIds: $userIds) {\n      success\n      deletedCount\n    }\n  }\n": typeof types.BulkDeleteUsersDocument,
     "\n  query GetUserAddresses {\n    userAddresses {\n      id\n      fullName\n      phone\n      addressLine1\n      addressLine2\n      city\n      state\n      country\n      postalCode\n      isDefault\n    }\n  }\n": typeof types.GetUserAddressesDocument,
     "\n  mutation CreateAddress($userId: ID!, $input: CreateAddressInput!) {\n    createAddress(userId: $userId, input: $input) {\n      id\n      fullName\n      addressLine1\n      city\n      state\n      country\n      postalCode\n    }\n  }\n": typeof types.CreateAddressDocument,
     "\n  mutation Login($input: LoginAuthInput!) {\n    login(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n      }\n      accessToken\n      refreshToken\n    }\n  }\n": typeof types.LoginDocument,
@@ -48,12 +50,20 @@ type Documents = {
     "\n  mutation DeleteProduct($id: String!) {\n    deleteProduct(id: $id) {\n      id\n      name\n    }\n  }\n": typeof types.DeleteProductDocument,
     "\n  mutation CreateReview($input: CreateReviewInput!) {\n    createReview(input: $input) {\n      id\n      rating\n      title\n      comment\n      isVerified\n      createdAt\n      user {\n        id\n        name\n      }\n      product {\n        id\n        name\n        averageRating\n        reviewCount\n      }\n    }\n  }\n": typeof types.CreateReviewDocument,
     "\n  query GetProductReviews($productId: String!) {\n    product(id: $productId) {\n      id\n      reviews {\n        id\n        rating\n        title\n        comment\n        isVerified\n        createdAt\n        updatedAt\n        user {\n          id\n          name\n        }\n      }\n      averageRating\n      reviewCount\n    }\n  }\n": typeof types.GetProductReviewsDocument,
+    "\n  query GetUsers {\n    users {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.GetUsersDocument,
+    "\n  query GetUser($id: ID!) {\n    user(id: $id) {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n      createdAt\n      updatedAt\n      addresses {\n        id\n        fullName\n        addressLine1\n        city\n        state\n        country\n        postalCode\n        isDefault\n      }\n    }\n  }\n": typeof types.GetUserDocument,
+    "\n  mutation UpdateUser($id: ID!, $input: UpdateUserInput!) {\n    updateUser(id: $id, input: $input) {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n    }\n  }\n": typeof types.UpdateUserDocument,
+    "\n  mutation DeleteUser($id: ID!) {\n    deleteUser(id: $id) {\n      id\n      email\n    }\n  }\n": typeof types.DeleteUserDocument,
+    "\n  mutation CreateUser($input: CreateUserInput!) {\n    createUser(input: $input) {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n    }\n  }\n": typeof types.CreateUserDocument,
+    "\n  mutation ToggleUserStatus($id: ID!) {\n    toggleUserStatus(id: $id) {\n      id\n      isActive\n    }\n  }\n": typeof types.ToggleUserStatusDocument,
     "\n  query GetMyWishlist {\n    myWishlist {\n      id\n      items {\n        id\n        addedAt\n        product {\n          id\n          name\n          slug\n          description\n          price\n          comparePrice\n          images\n          stock\n          isActive\n          isFeatured\n          averageRating\n          reviewCount\n          category {\n            id\n            name\n            slug\n          }\n        }\n      }\n    }\n  }\n": typeof types.GetMyWishlistDocument,
     "\n  mutation AddToWishlist($productId: ID!) {\n    addToWishlist(productId: $productId) {\n      id\n      items {\n        id\n        product {\n          id\n          name\n        }\n      }\n    }\n  }\n": typeof types.AddToWishlistDocument,
     "\n  mutation RemoveFromWishlist($productId: ID!) {\n    removeFromWishlist(productId: $productId) {\n      id\n      items {\n        id\n      }\n    }\n  }\n": typeof types.RemoveFromWishlistDocument,
 };
 const documents: Documents = {
     "\n  mutation MarkAllNotificationsAsRead {\n    markAllNotificationsAsRead\n  }\n": types.MarkAllNotificationsAsReadDocument,
+    "\n  mutation BulkUpdateUsers($userIds: [ID!]!, $input: BulkUpdateUsersInput!) {\n    bulkUpdateUsers(userIds: $userIds, input: $input) {\n      success\n      updatedCount\n    }\n  }\n": types.BulkUpdateUsersDocument,
+    "\n  mutation BulkDeleteUsers($userIds: [ID!]!) {\n    bulkDeleteUsers(userIds: $userIds) {\n      success\n      deletedCount\n    }\n  }\n": types.BulkDeleteUsersDocument,
     "\n  query GetUserAddresses {\n    userAddresses {\n      id\n      fullName\n      phone\n      addressLine1\n      addressLine2\n      city\n      state\n      country\n      postalCode\n      isDefault\n    }\n  }\n": types.GetUserAddressesDocument,
     "\n  mutation CreateAddress($userId: ID!, $input: CreateAddressInput!) {\n    createAddress(userId: $userId, input: $input) {\n      id\n      fullName\n      addressLine1\n      city\n      state\n      country\n      postalCode\n    }\n  }\n": types.CreateAddressDocument,
     "\n  mutation Login($input: LoginAuthInput!) {\n    login(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n      }\n      accessToken\n      refreshToken\n    }\n  }\n": types.LoginDocument,
@@ -87,6 +97,12 @@ const documents: Documents = {
     "\n  mutation DeleteProduct($id: String!) {\n    deleteProduct(id: $id) {\n      id\n      name\n    }\n  }\n": types.DeleteProductDocument,
     "\n  mutation CreateReview($input: CreateReviewInput!) {\n    createReview(input: $input) {\n      id\n      rating\n      title\n      comment\n      isVerified\n      createdAt\n      user {\n        id\n        name\n      }\n      product {\n        id\n        name\n        averageRating\n        reviewCount\n      }\n    }\n  }\n": types.CreateReviewDocument,
     "\n  query GetProductReviews($productId: String!) {\n    product(id: $productId) {\n      id\n      reviews {\n        id\n        rating\n        title\n        comment\n        isVerified\n        createdAt\n        updatedAt\n        user {\n          id\n          name\n        }\n      }\n      averageRating\n      reviewCount\n    }\n  }\n": types.GetProductReviewsDocument,
+    "\n  query GetUsers {\n    users {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n      createdAt\n      updatedAt\n    }\n  }\n": types.GetUsersDocument,
+    "\n  query GetUser($id: ID!) {\n    user(id: $id) {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n      createdAt\n      updatedAt\n      addresses {\n        id\n        fullName\n        addressLine1\n        city\n        state\n        country\n        postalCode\n        isDefault\n      }\n    }\n  }\n": types.GetUserDocument,
+    "\n  mutation UpdateUser($id: ID!, $input: UpdateUserInput!) {\n    updateUser(id: $id, input: $input) {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n    }\n  }\n": types.UpdateUserDocument,
+    "\n  mutation DeleteUser($id: ID!) {\n    deleteUser(id: $id) {\n      id\n      email\n    }\n  }\n": types.DeleteUserDocument,
+    "\n  mutation CreateUser($input: CreateUserInput!) {\n    createUser(input: $input) {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n    }\n  }\n": types.CreateUserDocument,
+    "\n  mutation ToggleUserStatus($id: ID!) {\n    toggleUserStatus(id: $id) {\n      id\n      isActive\n    }\n  }\n": types.ToggleUserStatusDocument,
     "\n  query GetMyWishlist {\n    myWishlist {\n      id\n      items {\n        id\n        addedAt\n        product {\n          id\n          name\n          slug\n          description\n          price\n          comparePrice\n          images\n          stock\n          isActive\n          isFeatured\n          averageRating\n          reviewCount\n          category {\n            id\n            name\n            slug\n          }\n        }\n      }\n    }\n  }\n": types.GetMyWishlistDocument,
     "\n  mutation AddToWishlist($productId: ID!) {\n    addToWishlist(productId: $productId) {\n      id\n      items {\n        id\n        product {\n          id\n          name\n        }\n      }\n    }\n  }\n": types.AddToWishlistDocument,
     "\n  mutation RemoveFromWishlist($productId: ID!) {\n    removeFromWishlist(productId: $productId) {\n      id\n      items {\n        id\n      }\n    }\n  }\n": types.RemoveFromWishlistDocument,
@@ -110,6 +126,14 @@ export function graphql(source: string): unknown;
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation MarkAllNotificationsAsRead {\n    markAllNotificationsAsRead\n  }\n"): (typeof documents)["\n  mutation MarkAllNotificationsAsRead {\n    markAllNotificationsAsRead\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation BulkUpdateUsers($userIds: [ID!]!, $input: BulkUpdateUsersInput!) {\n    bulkUpdateUsers(userIds: $userIds, input: $input) {\n      success\n      updatedCount\n    }\n  }\n"): (typeof documents)["\n  mutation BulkUpdateUsers($userIds: [ID!]!, $input: BulkUpdateUsersInput!) {\n    bulkUpdateUsers(userIds: $userIds, input: $input) {\n      success\n      updatedCount\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation BulkDeleteUsers($userIds: [ID!]!) {\n    bulkDeleteUsers(userIds: $userIds) {\n      success\n      deletedCount\n    }\n  }\n"): (typeof documents)["\n  mutation BulkDeleteUsers($userIds: [ID!]!) {\n    bulkDeleteUsers(userIds: $userIds) {\n      success\n      deletedCount\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -242,6 +266,30 @@ export function graphql(source: "\n  mutation CreateReview($input: CreateReviewI
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query GetProductReviews($productId: String!) {\n    product(id: $productId) {\n      id\n      reviews {\n        id\n        rating\n        title\n        comment\n        isVerified\n        createdAt\n        updatedAt\n        user {\n          id\n          name\n        }\n      }\n      averageRating\n      reviewCount\n    }\n  }\n"): (typeof documents)["\n  query GetProductReviews($productId: String!) {\n    product(id: $productId) {\n      id\n      reviews {\n        id\n        rating\n        title\n        comment\n        isVerified\n        createdAt\n        updatedAt\n        user {\n          id\n          name\n        }\n      }\n      averageRating\n      reviewCount\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetUsers {\n    users {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n      createdAt\n      updatedAt\n    }\n  }\n"): (typeof documents)["\n  query GetUsers {\n    users {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n      createdAt\n      updatedAt\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetUser($id: ID!) {\n    user(id: $id) {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n      createdAt\n      updatedAt\n      addresses {\n        id\n        fullName\n        addressLine1\n        city\n        state\n        country\n        postalCode\n        isDefault\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetUser($id: ID!) {\n    user(id: $id) {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n      createdAt\n      updatedAt\n      addresses {\n        id\n        fullName\n        addressLine1\n        city\n        state\n        country\n        postalCode\n        isDefault\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpdateUser($id: ID!, $input: UpdateUserInput!) {\n    updateUser(id: $id, input: $input) {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateUser($id: ID!, $input: UpdateUserInput!) {\n    updateUser(id: $id, input: $input) {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation DeleteUser($id: ID!) {\n    deleteUser(id: $id) {\n      id\n      email\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteUser($id: ID!) {\n    deleteUser(id: $id) {\n      id\n      email\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateUser($input: CreateUserInput!) {\n    createUser(input: $input) {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n    }\n  }\n"): (typeof documents)["\n  mutation CreateUser($input: CreateUserInput!) {\n    createUser(input: $input) {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation ToggleUserStatus($id: ID!) {\n    toggleUserStatus(id: $id) {\n      id\n      isActive\n    }\n  }\n"): (typeof documents)["\n  mutation ToggleUserStatus($id: ID!) {\n    toggleUserStatus(id: $id) {\n      id\n      isActive\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
