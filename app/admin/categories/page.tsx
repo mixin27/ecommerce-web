@@ -21,11 +21,21 @@ import {
   DeleteCategoryDocument,
   GetCategoriesDocument,
   GetCategoriesQuery,
+  UpdateCategoryDocument,
 } from '@/graphql/generated/graphql';
 
 export default function AdminCategoriesPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newCategory, setNewCategory] = useState({
+    name: '',
+    slug: '',
+    description: '',
+    image: '',
+  });
+
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<any>(null);
+  const [editFormData, setEditFormData] = useState({
     name: '',
     slug: '',
     description: '',
@@ -53,6 +63,17 @@ export default function AdminCategoriesPage() {
     },
   });
 
+  const [updateCategory, { loading: updating }] = useMutation(
+    UpdateCategoryDocument,
+    {
+      onCompleted: () => {
+        refetch();
+        setIsEditDialogOpen(false);
+        setEditingCategory(null);
+      },
+    },
+  );
+
   const handleCreateCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -72,6 +93,40 @@ export default function AdminCategoriesPage() {
       console.error('Create error:', error);
       alert('Failed to create category');
     }
+  };
+
+  const handleUpdateCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingCategory) return;
+
+    try {
+      await updateCategory({
+        variables: {
+          id: editingCategory.id,
+          input: {
+            id: editingCategory.id,
+            name: editFormData.name,
+            slug: editFormData.slug,
+            description: editFormData.description || undefined,
+            image: editFormData.image || undefined,
+          },
+        },
+      });
+    } catch (error) {
+      console.error('Update error:', error);
+      alert('Failed to update category');
+    }
+  };
+
+  const openEditDialog = (category: any) => {
+    setEditingCategory(category);
+    setEditFormData({
+      name: category.name,
+      slug: category.slug,
+      description: category.description || '',
+      image: category.image || '',
+    });
+    setIsEditDialogOpen(true);
   };
 
   const handleDelete = async (id: string, name: string) => {
@@ -175,6 +230,83 @@ export default function AdminCategoriesPage() {
             </form>
           </DialogContent>
         </Dialog>
+
+        {/* Edit Category Dialog */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Category</DialogTitle>
+              <DialogDescription>
+                Update category details for {editingCategory?.name}
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleUpdateCategory}>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-name">Name *</Label>
+                  <Input
+                    id="edit-name"
+                    value={editFormData.name}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, name: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-slug">Slug *</Label>
+                  <Input
+                    id="edit-slug"
+                    value={editFormData.slug}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, slug: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-description">Description</Label>
+                  <Input
+                    id="edit-description"
+                    value={editFormData.description}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        description: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-image">Image URL</Label>
+                  <Input
+                    id="edit-image"
+                    value={editFormData.image}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        image: e.target.value,
+                      })
+                    }
+                    placeholder="https://example.com/image.jpg"
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsEditDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={updating}>
+                  {updating ? 'Updating...' : 'Save Changes'}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {loading ? (
@@ -229,7 +361,7 @@ export default function AdminCategoriesPage() {
                       variant="outline"
                       size="sm"
                       className="flex-1"
-                      onClick={() => {}}
+                      onClick={() => openEditDialog(category)}
                     >
                       <Edit className="w-4 h-4 mr-1" />
                       Edit
