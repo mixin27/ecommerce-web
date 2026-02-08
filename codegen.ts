@@ -1,13 +1,10 @@
-import 'dotenv/config';
 import type { CodegenConfig } from '@graphql-codegen/cli';
-
-const isProd = process.env.NODE_ENV === 'production';
 
 const config: CodegenConfig = {
   overwrite: true,
-  schema: isProd
-    ? process.env.NEXT_GRAPHQL_ENDPOINT!
-    : 'http://localhost:4000/graphql',
+  schema: {
+    [process.env.NEXT_GRAPHQL_ENDPOINT || 'http://localhost:4000/graphql']: {},
+  },
   documents: './**/*.{tsx,ts,graphql}',
   ignoreNoDocuments: true,
   generates: {
