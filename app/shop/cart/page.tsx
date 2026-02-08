@@ -1,20 +1,113 @@
-"use client";
+'use client';
 
-import { useCartStore } from "@/store/cart-store";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useQuery, useMutation } from '@apollo/client/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import {
+  ClearCartDocument,
+  GetMyCartDocument,
+  GetMyCartQuery,
+  RemoveFromCartDocument,
+  UpdateCartItemDocument,
+} from '@/graphql/generated/graphql';
 
 export default function CartPage() {
   const router = useRouter();
-  const { items, removeItem, updateQuantity, getTotalPrice, clearCart } =
-    useCartStore();
+
+  const { data, loading, refetch } = useQuery<GetMyCartQuery>(
+    GetMyCartDocument,
+    {
+      fetchPolicy: 'network-only',
+    },
+  );
+
+  const [updateCartItem, { loading: updating }] = useMutation(
+    UpdateCartItemDocument,
+    {
+      onCompleted: () => {
+        refetch();
+      },
+      onError: (error) => {
+        console.error('Update cart error:', error);
+        alert('Failed to update cart');
+      },
+    },
+  );
+
+  const [removeFromCart, { loading: removing }] = useMutation(
+    RemoveFromCartDocument,
+    {
+      onCompleted: () => {
+        refetch();
+      },
+      onError: (error) => {
+        console.error('Remove from cart error:', error);
+        alert('Failed to remove item from cart');
+      },
+    },
+  );
+
+  const [clearCart, { loading: clearing }] = useMutation(ClearCartDocument, {
+    onCompleted: () => {
+      refetch();
+    },
+    onError: (error) => {
+      console.error('Clear cart error:', error);
+      alert('Failed to clear cart');
+    },
+  });
+
+  const handleUpdateQuantity = async (itemId: string, quantity: number) => {
+    if (quantity < 1) return;
+    try {
+      await updateCartItem({
+        variables: {
+          input: {
+            itemId,
+            quantity,
+          },
+        },
+      });
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+    }
+  };
+
+  const handleRemoveItem = async (itemId: string) => {
+    try {
+      await removeFromCart({
+        variables: { itemId },
+      });
+    } catch (error) {
+      console.error('Error removing item:', error);
+    }
+  };
+
+  const handleClearCart = async () => {
+    if (confirm('Are you sure you want to clear your cart?')) {
+      try {
+        await clearCart();
+      } catch (error) {
+        console.error('Error clearing cart:', error);
+      }
+    }
+  };
 
   const handleCheckout = () => {
-    router.push("/shop/checkout");
+    router.push('/shop/checkout');
   };
+
+  if (loading) {
+    return <div className="text-center py-12">Loading cart...</div>;
+  }
+
+  const cart = data?.myCart;
+  const items = cart?.items || [];
+  const subtotal = cart?.subtotal || 0;
+  const itemCount = cart?.itemCount || 0;
 
   if (items.length === 0) {
     return (
@@ -36,39 +129,47 @@ export default function CartPage() {
       <div>
         <h1 className="text-3xl font-bold">Shopping Cart</h1>
         <p className="text-muted-foreground mt-2">
-          {items.length} {items.length === 1 ? "item" : "items"} in your cart
+          {itemCount} {itemCount === 1 ? 'item' : 'items'} in your cart
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Cart Items */}
         <div className="lg:col-span-2 space-y-4">
-          {items.map((item) => (
+          {items.map((item: any) => (
             <Card key={item.id}>
               <CardContent className="p-6">
                 <div className="flex items-center space-x-4">
-                  {item.image && (
+                  {item.product.images?.[0] && (
                     <img
-                      src={item.image}
-                      alt={item.name}
+                      src={item.product.images[0]}
+                      alt={item.product.name}
                       className="w-24 h-24 object-cover rounded"
                     />
                   )}
                   <div className="flex-1">
-                    <h3 className="font-semibold text-lg">{item.name}</h3>
+                    <Link href={`/shop/products/${item.product.slug}`}>
+                      <h3 className="font-semibold text-lg hover:text-primary">
+                        {item.product.name}
+                      </h3>
+                    </Link>
                     <p className="text-muted-foreground">
-                      ${item.price.toFixed(2)} each
+                      ${parseFloat(item.product.price).toFixed(2)} each
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Stock: {item.product.stock} available
                     </p>
                     <div className="flex items-center space-x-2 mt-2">
                       <Button
                         variant="outline"
                         size="icon"
                         onClick={() =>
-                          updateQuantity(
-                            item.productId,
+                          handleUpdateQuantity(
+                            item.id,
                             Math.max(1, item.quantity - 1),
                           )
                         }
+                        disabled={updating || item.quantity <= 1}
                       >
                         <Minus className="w-4 h-4" />
                       </Button>
@@ -79,7 +180,10 @@ export default function CartPage() {
                         variant="outline"
                         size="icon"
                         onClick={() =>
-                          updateQuantity(item.productId, item.quantity + 1)
+                          handleUpdateQuantity(item.id, item.quantity + 1)
+                        }
+                        disabled={
+                          updating || item.quantity >= item.product.stock
                         }
                       >
                         <Plus className="w-4 h-4" />
@@ -88,52 +192,59 @@ export default function CartPage() {
                   </div>
                   <div className="text-right">
                     <p className="font-bold text-lg">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      $
+                      {(parseFloat(item.product.price) * item.quantity).toFixed(
+                        2,
+                      )}
                     </p>
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => removeItem(item.productId)}
+                      onClick={() => handleRemoveItem(item.id)}
+                      disabled={removing}
                       className="mt-2 text-red-600 hover:text-red-700"
                     >
                       <Trash2 className="w-4 h-4 mr-1" />
-                      Remove
+                      {removing ? 'Removing...' : 'Remove'}
                     </Button>
                   </div>
                 </div>
               </CardContent>
             </Card>
           ))}
-          <Button variant="outline" onClick={clearCart} className="w-full">
-            Clear Cart
+          <Button
+            variant="outline"
+            onClick={handleClearCart}
+            disabled={clearing}
+            className="w-full"
+          >
+            {clearing ? 'Clearing...' : 'Clear Cart'}
           </Button>
         </div>
 
         {/* Order Summary */}
         <div>
           <Card>
-            <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Subtotal</span>
-                <span className="font-medium">
-                  ${getTotalPrice().toFixed(2)}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Shipping</span>
-                <span className="font-medium">Calculated at checkout</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Tax</span>
-                <span className="font-medium">Calculated at checkout</span>
-              </div>
-              <div className="border-t pt-4">
-                <div className="flex justify-between text-lg font-bold">
-                  <span>Total</span>
-                  <span>${getTotalPrice().toFixed(2)}</span>
+            <CardContent className="p-6 space-y-4">
+              <h2 className="text-xl font-bold">Order Summary</h2>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="font-medium">${subtotal.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Shipping</span>
+                  <span className="font-medium">Calculated at checkout</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Tax</span>
+                  <span className="font-medium">Calculated at checkout</span>
+                </div>
+                <div className="border-t pt-4">
+                  <div className="flex justify-between text-lg font-bold">
+                    <span>Total</span>
+                    <span>${subtotal.toFixed(2)}</span>
+                  </div>
                 </div>
               </div>
               <Button className="w-full" size="lg" onClick={handleCheckout}>

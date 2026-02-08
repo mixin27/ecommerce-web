@@ -1,0 +1,11 @@
+'use client';
+
+import { use } from 'react';
+
+const OrderDetailPage = ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = use(params);
+
+  return <div>{id}</div>;
+};
+
+export default OrderDetailPage;

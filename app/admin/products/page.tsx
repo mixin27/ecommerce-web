@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useQuery, useMutation } from "@apollo/client/react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Edit, Trash2, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import Link from "next/link";
+import { useState } from 'react';
+import { useQuery, useMutation } from '@apollo/client/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Plus, Edit, Trash2, Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import Link from 'next/link';
 import {
   DeleteProductDocument,
   GetProductsDocument,
   GetProductsQuery,
-} from "@/graphql/generated/graphql";
+} from '@/graphql/generated/graphql';
 
 export default function AdminProductsPage() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
 
   const { data, loading, refetch } = useQuery<GetProductsQuery>(
     GetProductsDocument,
@@ -41,8 +41,8 @@ export default function AdminProductsPage() {
       try {
         await deleteProduct({ variables: { id } });
       } catch (error) {
-        console.error("Delete error:", error);
-        alert("Failed to delete product");
+        console.error('Delete error:', error);
+        alert('Failed to delete product');
       }
     }
   };
@@ -58,7 +58,7 @@ export default function AdminProductsPage() {
             Manage your product catalog
           </p>
         </div>
-        <Link href="/admin/products/new">
+        <Link href="/admin/products/new/edit">
           <Button>
             <Plus className="w-4 h-4 mr-2" />
             Add Product
@@ -119,7 +119,7 @@ export default function AdminProductsPage() {
                         </div>
                       </td>
                       <td className="p-4">
-                        {product.category?.name || "Uncategorized"}
+                        {product.category?.name || 'Uncategorized'}
                       </td>
                       <td className="p-4 font-medium">
                         ${parseFloat(product.price).toFixed(2)}
@@ -128,10 +128,10 @@ export default function AdminProductsPage() {
                         <span
                           className={`px-2 py-1 rounded-full text-xs ${
                             product.stock > 10
-                              ? "bg-green-100 text-green-800"
+                              ? 'bg-green-100 text-green-800'
                               : product.stock > 0
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-red-100 text-red-800"
+                                ? 'bg-yellow-100 text-yellow-800'
+                                : 'bg-red-100 text-red-800'
                           }`}
                         >
                           {product.stock} units
@@ -141,16 +141,16 @@ export default function AdminProductsPage() {
                         <span
                           className={`px-2 py-1 rounded-full text-xs ${
                             product.isActive
-                              ? "bg-green-100 text-green-800"
-                              : "bg-gray-100 text-gray-800"
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-gray-100 text-gray-800'
                           }`}
                         >
-                          {product.isActive ? "Active" : "Inactive"}
+                          {product.isActive ? 'Active' : 'Inactive'}
                         </span>
                       </td>
                       <td className="p-4">
                         <div className="flex items-center space-x-2">
-                          <Link href={`/admin/products/${product.id}`}>
+                          <Link href={`/admin/products/${product.id}/edit`}>
                             <Button variant="outline" size="sm">
                               <Edit className="w-4 h-4" />
                             </Button>

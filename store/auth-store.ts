@@ -9,6 +9,8 @@ export interface User {
   role: UserRole;
   isActive: boolean;
   emailVerified: boolean;
+  createdAt: any;
+  updatedAt: any;
 }
 
 interface AuthState {

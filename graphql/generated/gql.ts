@@ -14,6 +14,9 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
+    "\n  mutation MarkAllNotificationsAsRead {\n    markAllNotificationsAsRead\n  }\n": typeof types.MarkAllNotificationsAsReadDocument,
+    "\n  query GetUserAddresses {\n    userAddresses {\n      id\n      fullName\n      phone\n      addressLine1\n      addressLine2\n      city\n      state\n      country\n      postalCode\n      isDefault\n    }\n  }\n": typeof types.GetUserAddressesDocument,
+    "\n  mutation CreateAddress($userId: ID!, $input: CreateAddressInput!) {\n    createAddress(userId: $userId, input: $input) {\n      id\n      fullName\n      addressLine1\n      city\n      state\n      country\n      postalCode\n    }\n  }\n": typeof types.CreateAddressDocument,
     "\n  mutation Login($input: LoginAuthInput!) {\n    login(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n      }\n      accessToken\n      refreshToken\n    }\n  }\n": typeof types.LoginDocument,
     "\n  mutation Register($input: RegisterAuthInput!) {\n    register(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n      }\n      accessToken\n      refreshToken\n    }\n  }\n": typeof types.RegisterDocument,
     "\n  query Me {\n    me {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.MeDocument,
@@ -22,6 +25,11 @@ type Documents = {
     "\n  mutation UpdateCartItem($input: UpdateCartItemInput!) {\n    updateCartItem(input: $input) {\n      id\n      subtotal\n      itemCount\n      items {\n        id\n        quantity\n        product {\n          id\n          name\n          price\n          images\n        }\n      }\n    }\n  }\n": typeof types.UpdateCartItemDocument,
     "\n  mutation RemoveFromCart($itemId: ID!) {\n    removeFromCart(itemId: $itemId) {\n      id\n      subtotal\n      itemCount\n    }\n  }\n": typeof types.RemoveFromCartDocument,
     "\n  mutation ClearCart {\n    clearCart\n  }\n": typeof types.ClearCartDocument,
+    "\n  query GetCategories {\n    categories {\n      id\n      name\n      slug\n      description\n      image\n      parent {\n        id\n        name\n        slug\n      }\n      children {\n        id\n        name\n        slug\n      }\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.GetCategoriesDocument,
+    "\n  query GetCategory($id: ID, $slug: String) {\n    category(id: $id, slug: $slug) {\n      id\n      name\n      slug\n      description\n      image\n      parent {\n        id\n        name\n        slug\n      }\n      children {\n        id\n        name\n        slug\n        description\n        image\n      }\n      products {\n        id\n        name\n        slug\n        price\n        images\n        stock\n        isActive\n        isFeatured\n        averageRating\n        reviewCount\n      }\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.GetCategoryDocument,
+    "\n  mutation CreateCategory($input: CreateCategoryInput!) {\n    createCategory(input: $input) {\n      id\n      name\n      slug\n      description\n      image\n    }\n  }\n": typeof types.CreateCategoryDocument,
+    "\n  mutation UpdateCategory($id: ID!, $input: UpdateCategoryInput!) {\n    updateCategory(id: $id, input: $input) {\n      id\n      name\n      slug\n      description\n      image\n    }\n  }\n": typeof types.UpdateCategoryDocument,
+    "\n  mutation DeleteCategory($id: ID!) {\n    deleteCategory(id: $id) {\n      id\n      name\n    }\n  }\n": typeof types.DeleteCategoryDocument,
     "\n  query GetDashboardStats {\n    dashboardStats {\n      totalRevenue\n      totalOrders\n      totalCustomers\n      totalProducts\n      revenueGrowth\n      ordersGrowth\n      lowStockProducts\n      pendingOrders\n    }\n  }\n": typeof types.GetDashboardStatsDocument,
     "\n  query GetRevenueData($days: Float!) {\n    revenueData(days: $days) {\n      date\n      revenue\n      orders\n    }\n  }\n": typeof types.GetRevenueDataDocument,
     "\n  query GetInventoryAnalytics {\n    inventoryAnalytics {\n      totalProducts\n      activeProducts\n      totalStockValue\n      averageTurnoverRate\n      lowStockCount\n      outOfStockCount\n    }\n  }\n": typeof types.GetInventoryAnalyticsDocument,
@@ -38,8 +46,14 @@ type Documents = {
     "\n  mutation CreateProduct($input: CreateProductInput!) {\n    createProduct(input: $input) {\n      id\n      name\n      slug\n      description\n      price\n      stock\n      images\n      isActive\n      isFeatured\n    }\n  }\n": typeof types.CreateProductDocument,
     "\n  mutation UpdateProduct($id: String!, $input: UpdateProductInput!) {\n    updateProduct(id: $id, input: $input) {\n      id\n      name\n      slug\n      description\n      price\n      stock\n      images\n      isActive\n      isFeatured\n    }\n  }\n": typeof types.UpdateProductDocument,
     "\n  mutation DeleteProduct($id: String!) {\n    deleteProduct(id: $id) {\n      id\n      name\n    }\n  }\n": typeof types.DeleteProductDocument,
+    "\n  query GetMyWishlist {\n    myWishlist {\n      id\n      items {\n        id\n        addedAt\n        product {\n          id\n          name\n          slug\n          description\n          price\n          comparePrice\n          images\n          stock\n          isActive\n          isFeatured\n          averageRating\n          reviewCount\n          category {\n            id\n            name\n            slug\n          }\n        }\n      }\n    }\n  }\n": typeof types.GetMyWishlistDocument,
+    "\n  mutation AddToWishlist($productId: ID!) {\n    addToWishlist(productId: $productId) {\n      id\n      items {\n        id\n        product {\n          id\n          name\n        }\n      }\n    }\n  }\n": typeof types.AddToWishlistDocument,
+    "\n  mutation RemoveFromWishlist($productId: ID!) {\n    removeFromWishlist(productId: $productId) {\n      id\n      items {\n        id\n      }\n    }\n  }\n": typeof types.RemoveFromWishlistDocument,
 };
 const documents: Documents = {
+    "\n  mutation MarkAllNotificationsAsRead {\n    markAllNotificationsAsRead\n  }\n": types.MarkAllNotificationsAsReadDocument,
+    "\n  query GetUserAddresses {\n    userAddresses {\n      id\n      fullName\n      phone\n      addressLine1\n      addressLine2\n      city\n      state\n      country\n      postalCode\n      isDefault\n    }\n  }\n": types.GetUserAddressesDocument,
+    "\n  mutation CreateAddress($userId: ID!, $input: CreateAddressInput!) {\n    createAddress(userId: $userId, input: $input) {\n      id\n      fullName\n      addressLine1\n      city\n      state\n      country\n      postalCode\n    }\n  }\n": types.CreateAddressDocument,
     "\n  mutation Login($input: LoginAuthInput!) {\n    login(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n      }\n      accessToken\n      refreshToken\n    }\n  }\n": types.LoginDocument,
     "\n  mutation Register($input: RegisterAuthInput!) {\n    register(input: $input) {\n      user {\n        id\n        email\n        name\n        role\n        isActive\n        emailVerified\n      }\n      accessToken\n      refreshToken\n    }\n  }\n": types.RegisterDocument,
     "\n  query Me {\n    me {\n      id\n      email\n      name\n      role\n      isActive\n      emailVerified\n      createdAt\n      updatedAt\n    }\n  }\n": types.MeDocument,
@@ -48,6 +62,11 @@ const documents: Documents = {
     "\n  mutation UpdateCartItem($input: UpdateCartItemInput!) {\n    updateCartItem(input: $input) {\n      id\n      subtotal\n      itemCount\n      items {\n        id\n        quantity\n        product {\n          id\n          name\n          price\n          images\n        }\n      }\n    }\n  }\n": types.UpdateCartItemDocument,
     "\n  mutation RemoveFromCart($itemId: ID!) {\n    removeFromCart(itemId: $itemId) {\n      id\n      subtotal\n      itemCount\n    }\n  }\n": types.RemoveFromCartDocument,
     "\n  mutation ClearCart {\n    clearCart\n  }\n": types.ClearCartDocument,
+    "\n  query GetCategories {\n    categories {\n      id\n      name\n      slug\n      description\n      image\n      parent {\n        id\n        name\n        slug\n      }\n      children {\n        id\n        name\n        slug\n      }\n      createdAt\n      updatedAt\n    }\n  }\n": types.GetCategoriesDocument,
+    "\n  query GetCategory($id: ID, $slug: String) {\n    category(id: $id, slug: $slug) {\n      id\n      name\n      slug\n      description\n      image\n      parent {\n        id\n        name\n        slug\n      }\n      children {\n        id\n        name\n        slug\n        description\n        image\n      }\n      products {\n        id\n        name\n        slug\n        price\n        images\n        stock\n        isActive\n        isFeatured\n        averageRating\n        reviewCount\n      }\n      createdAt\n      updatedAt\n    }\n  }\n": types.GetCategoryDocument,
+    "\n  mutation CreateCategory($input: CreateCategoryInput!) {\n    createCategory(input: $input) {\n      id\n      name\n      slug\n      description\n      image\n    }\n  }\n": types.CreateCategoryDocument,
+    "\n  mutation UpdateCategory($id: ID!, $input: UpdateCategoryInput!) {\n    updateCategory(id: $id, input: $input) {\n      id\n      name\n      slug\n      description\n      image\n    }\n  }\n": types.UpdateCategoryDocument,
+    "\n  mutation DeleteCategory($id: ID!) {\n    deleteCategory(id: $id) {\n      id\n      name\n    }\n  }\n": types.DeleteCategoryDocument,
     "\n  query GetDashboardStats {\n    dashboardStats {\n      totalRevenue\n      totalOrders\n      totalCustomers\n      totalProducts\n      revenueGrowth\n      ordersGrowth\n      lowStockProducts\n      pendingOrders\n    }\n  }\n": types.GetDashboardStatsDocument,
     "\n  query GetRevenueData($days: Float!) {\n    revenueData(days: $days) {\n      date\n      revenue\n      orders\n    }\n  }\n": types.GetRevenueDataDocument,
     "\n  query GetInventoryAnalytics {\n    inventoryAnalytics {\n      totalProducts\n      activeProducts\n      totalStockValue\n      averageTurnoverRate\n      lowStockCount\n      outOfStockCount\n    }\n  }\n": types.GetInventoryAnalyticsDocument,
@@ -64,6 +83,9 @@ const documents: Documents = {
     "\n  mutation CreateProduct($input: CreateProductInput!) {\n    createProduct(input: $input) {\n      id\n      name\n      slug\n      description\n      price\n      stock\n      images\n      isActive\n      isFeatured\n    }\n  }\n": types.CreateProductDocument,
     "\n  mutation UpdateProduct($id: String!, $input: UpdateProductInput!) {\n    updateProduct(id: $id, input: $input) {\n      id\n      name\n      slug\n      description\n      price\n      stock\n      images\n      isActive\n      isFeatured\n    }\n  }\n": types.UpdateProductDocument,
     "\n  mutation DeleteProduct($id: String!) {\n    deleteProduct(id: $id) {\n      id\n      name\n    }\n  }\n": types.DeleteProductDocument,
+    "\n  query GetMyWishlist {\n    myWishlist {\n      id\n      items {\n        id\n        addedAt\n        product {\n          id\n          name\n          slug\n          description\n          price\n          comparePrice\n          images\n          stock\n          isActive\n          isFeatured\n          averageRating\n          reviewCount\n          category {\n            id\n            name\n            slug\n          }\n        }\n      }\n    }\n  }\n": types.GetMyWishlistDocument,
+    "\n  mutation AddToWishlist($productId: ID!) {\n    addToWishlist(productId: $productId) {\n      id\n      items {\n        id\n        product {\n          id\n          name\n        }\n      }\n    }\n  }\n": types.AddToWishlistDocument,
+    "\n  mutation RemoveFromWishlist($productId: ID!) {\n    removeFromWishlist(productId: $productId) {\n      id\n      items {\n        id\n      }\n    }\n  }\n": types.RemoveFromWishlistDocument,
 };
 
 /**
@@ -80,6 +102,18 @@ const documents: Documents = {
  */
 export function graphql(source: string): unknown;
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation MarkAllNotificationsAsRead {\n    markAllNotificationsAsRead\n  }\n"): (typeof documents)["\n  mutation MarkAllNotificationsAsRead {\n    markAllNotificationsAsRead\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetUserAddresses {\n    userAddresses {\n      id\n      fullName\n      phone\n      addressLine1\n      addressLine2\n      city\n      state\n      country\n      postalCode\n      isDefault\n    }\n  }\n"): (typeof documents)["\n  query GetUserAddresses {\n    userAddresses {\n      id\n      fullName\n      phone\n      addressLine1\n      addressLine2\n      city\n      state\n      country\n      postalCode\n      isDefault\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateAddress($userId: ID!, $input: CreateAddressInput!) {\n    createAddress(userId: $userId, input: $input) {\n      id\n      fullName\n      addressLine1\n      city\n      state\n      country\n      postalCode\n    }\n  }\n"): (typeof documents)["\n  mutation CreateAddress($userId: ID!, $input: CreateAddressInput!) {\n    createAddress(userId: $userId, input: $input) {\n      id\n      fullName\n      addressLine1\n      city\n      state\n      country\n      postalCode\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -112,6 +146,26 @@ export function graphql(source: "\n  mutation RemoveFromCart($itemId: ID!) {\n  
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation ClearCart {\n    clearCart\n  }\n"): (typeof documents)["\n  mutation ClearCart {\n    clearCart\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetCategories {\n    categories {\n      id\n      name\n      slug\n      description\n      image\n      parent {\n        id\n        name\n        slug\n      }\n      children {\n        id\n        name\n        slug\n      }\n      createdAt\n      updatedAt\n    }\n  }\n"): (typeof documents)["\n  query GetCategories {\n    categories {\n      id\n      name\n      slug\n      description\n      image\n      parent {\n        id\n        name\n        slug\n      }\n      children {\n        id\n        name\n        slug\n      }\n      createdAt\n      updatedAt\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetCategory($id: ID, $slug: String) {\n    category(id: $id, slug: $slug) {\n      id\n      name\n      slug\n      description\n      image\n      parent {\n        id\n        name\n        slug\n      }\n      children {\n        id\n        name\n        slug\n        description\n        image\n      }\n      products {\n        id\n        name\n        slug\n        price\n        images\n        stock\n        isActive\n        isFeatured\n        averageRating\n        reviewCount\n      }\n      createdAt\n      updatedAt\n    }\n  }\n"): (typeof documents)["\n  query GetCategory($id: ID, $slug: String) {\n    category(id: $id, slug: $slug) {\n      id\n      name\n      slug\n      description\n      image\n      parent {\n        id\n        name\n        slug\n      }\n      children {\n        id\n        name\n        slug\n        description\n        image\n      }\n      products {\n        id\n        name\n        slug\n        price\n        images\n        stock\n        isActive\n        isFeatured\n        averageRating\n        reviewCount\n      }\n      createdAt\n      updatedAt\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateCategory($input: CreateCategoryInput!) {\n    createCategory(input: $input) {\n      id\n      name\n      slug\n      description\n      image\n    }\n  }\n"): (typeof documents)["\n  mutation CreateCategory($input: CreateCategoryInput!) {\n    createCategory(input: $input) {\n      id\n      name\n      slug\n      description\n      image\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpdateCategory($id: ID!, $input: UpdateCategoryInput!) {\n    updateCategory(id: $id, input: $input) {\n      id\n      name\n      slug\n      description\n      image\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateCategory($id: ID!, $input: UpdateCategoryInput!) {\n    updateCategory(id: $id, input: $input) {\n      id\n      name\n      slug\n      description\n      image\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation DeleteCategory($id: ID!) {\n    deleteCategory(id: $id) {\n      id\n      name\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteCategory($id: ID!) {\n    deleteCategory(id: $id) {\n      id\n      name\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -176,6 +230,18 @@ export function graphql(source: "\n  mutation UpdateProduct($id: String!, $input
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation DeleteProduct($id: String!) {\n    deleteProduct(id: $id) {\n      id\n      name\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteProduct($id: String!) {\n    deleteProduct(id: $id) {\n      id\n      name\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetMyWishlist {\n    myWishlist {\n      id\n      items {\n        id\n        addedAt\n        product {\n          id\n          name\n          slug\n          description\n          price\n          comparePrice\n          images\n          stock\n          isActive\n          isFeatured\n          averageRating\n          reviewCount\n          category {\n            id\n            name\n            slug\n          }\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetMyWishlist {\n    myWishlist {\n      id\n      items {\n        id\n        addedAt\n        product {\n          id\n          name\n          slug\n          description\n          price\n          comparePrice\n          images\n          stock\n          isActive\n          isFeatured\n          averageRating\n          reviewCount\n          category {\n            id\n            name\n            slug\n          }\n        }\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation AddToWishlist($productId: ID!) {\n    addToWishlist(productId: $productId) {\n      id\n      items {\n        id\n        product {\n          id\n          name\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation AddToWishlist($productId: ID!) {\n    addToWishlist(productId: $productId) {\n      id\n      items {\n        id\n        product {\n          id\n          name\n        }\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation RemoveFromWishlist($productId: ID!) {\n    removeFromWishlist(productId: $productId) {\n      id\n      items {\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation RemoveFromWishlist($productId: ID!) {\n    removeFromWishlist(productId: $productId) {\n      id\n      items {\n        id\n      }\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

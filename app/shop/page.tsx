@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery } from '@apollo/client/react';
+import { useQuery, useMutation } from '@apollo/client/react';
 import {
   Card,
   CardContent,
@@ -13,15 +13,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ShoppingCart, Search, Star } from 'lucide-react';
 import Link from 'next/link';
-import { useCartStore } from '@/store/cart-store';
 import {
+  AddToCartDocument,
+  AddToCartMutation,
+  GetMyCartDocument,
   GetProductsDocument,
   GetProductsQuery,
 } from '@/graphql/generated/graphql';
 
 export default function ShopPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const { addItem } = useCartStore();
 
   const { data, loading } = useQuery<GetProductsQuery>(GetProductsDocument, {
     variables: {
@@ -35,19 +36,36 @@ export default function ShopPage() {
     },
   });
 
+  const [addToCart, { loading: addingToCart }] = useMutation<AddToCartMutation>(
+    AddToCartDocument,
+    {
+      refetchQueries: [{ query: GetMyCartDocument }],
+      onCompleted: () => {
+        alert('Product added to cart!');
+      },
+      onError: (error) => {
+        console.error('Add to cart error:', error);
+        alert('Failed to add product to cart');
+      },
+    },
+  );
+
   const products = data?.products?.edges?.map((edge: any) => edge.node) || [];
   const featuredProducts = products.filter((p: any) => p.isFeatured);
 
-  const handleAddToCart = (product: any) => {
-    addItem({
-      id: product.id,
-      productId: product.id,
-      name: product.name,
-      price: parseFloat(product.price),
-      quantity: 1,
-      image: product.images?.[0],
-    });
-    alert('Product added to cart!');
+  const handleAddToCart = async (product: any) => {
+    try {
+      await addToCart({
+        variables: {
+          input: {
+            productId: product.id,
+            quantity: 1,
+          },
+        },
+      });
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    }
   };
 
   return (
@@ -82,6 +100,7 @@ export default function ShopPage() {
                 key={product.id}
                 product={product}
                 onAddToCart={handleAddToCart}
+                isAddingToCart={addingToCart}
               />
             ))}
           </div>
@@ -104,6 +123,7 @@ export default function ShopPage() {
                 key={product.id}
                 product={product}
                 onAddToCart={handleAddToCart}
+                isAddingToCart={addingToCart}
               />
             ))}
           </div>
@@ -113,7 +133,7 @@ export default function ShopPage() {
   );
 }
 
-function ProductCard({ product, onAddToCart }: any) {
+function ProductCard({ product, onAddToCart, isAddingToCart }: any) {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <Link href={`/shop/products/${product.slug}`}>
@@ -159,7 +179,7 @@ function ProductCard({ product, onAddToCart }: any) {
             </span>
           )}
         </div>
-        {product.averageRating && (
+        {product.averageRating !== undefined && (
           <div className="flex items-center text-sm">
             <Star className="w-4 h-4 fill-yellow-400 text-yellow-400 mr-1" />
             <span className="font-medium">
@@ -175,10 +195,14 @@ function ProductCard({ product, onAddToCart }: any) {
         <Button
           className="w-full"
           onClick={() => onAddToCart(product)}
-          disabled={product.stock === 0}
+          disabled={product.stock === 0 || isAddingToCart}
         >
           <ShoppingCart className="w-4 h-4 mr-2" />
-          {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+          {isAddingToCart
+            ? 'Adding...'
+            : product.stock === 0
+              ? 'Out of Stock'
+              : 'Add to Cart'}
         </Button>
       </CardFooter>
     </Card>

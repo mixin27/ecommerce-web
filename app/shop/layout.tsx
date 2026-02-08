@@ -3,11 +3,15 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useQuery } from '@apollo/client/react';
 import { useAuthStore } from '@/store/auth-store';
-import { useCartStore } from '@/store/cart-store';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, User, LogOut, Heart, Package } from 'lucide-react';
-import { UserRole } from '@/graphql/generated/graphql';
+import {
+  GetMyCartDocument,
+  GetMyCartQuery,
+  UserRole,
+} from '@/graphql/generated/graphql';
 
 export default function ShopLayout({
   children,
@@ -16,8 +20,12 @@ export default function ShopLayout({
 }) {
   const router = useRouter();
   const { user, isAuthenticated, logout, _hasHydrated } = useAuthStore();
-  const { getTotalItems } = useCartStore();
   const [isLoading, setIsLoading] = useState(true);
+
+  const { data: cartData } = useQuery<GetMyCartQuery>(GetMyCartDocument, {
+    skip: !isAuthenticated,
+    pollInterval: 30000, // Refetch every 30 seconds
+  });
 
   useEffect(() => {
     // Wait for store to hydrate before redirecting
@@ -57,7 +65,7 @@ export default function ShopLayout({
     return null;
   }
 
-  const cartItemsCount = getTotalItems();
+  const cartItemsCount = cartData?.myCart?.itemCount || 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -83,10 +91,10 @@ export default function ShopLayout({
                 Categories
               </Link>
               <Link
-                href="/shop/deals"
+                href="/shop/search"
                 className="text-gray-700 hover:text-primary transition-colors"
               >
-                Deals
+                Search
               </Link>
             </nav>
 

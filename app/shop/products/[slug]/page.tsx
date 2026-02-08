@@ -1,13 +1,15 @@
 'use client';
 
-import { useQuery } from '@apollo/client/react';
+import { useQuery, useMutation } from '@apollo/client/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Star, ShoppingCart, Heart, Truck, Shield } from 'lucide-react';
-import { useCartStore } from '@/store/cart-store';
-import { useState } from 'react';
+import { use, useState } from 'react';
 import Link from 'next/link';
 import {
+  AddToCartDocument,
+  AddToCartMutation,
+  GetMyCartDocument,
   GetProductDocument,
   GetProductQuery,
 } from '@/graphql/generated/graphql';
@@ -15,14 +17,28 @@ import {
 export default function ProductDetailPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
+  const { slug } = use(params);
   const [quantity, setQuantity] = useState(1);
-  const { addItem } = useCartStore();
 
   const { data, loading } = useQuery<GetProductQuery>(GetProductDocument, {
-    variables: { slug: params.slug },
+    variables: { slug },
   });
+
+  const [addToCart, { loading: addingToCart }] = useMutation<AddToCartMutation>(
+    AddToCartDocument,
+    {
+      refetchQueries: [{ query: GetMyCartDocument }],
+      onCompleted: () => {
+        alert('Product added to cart!');
+      },
+      onError: (error) => {
+        console.error('Add to cart error:', error);
+        alert('Failed to add product to cart');
+      },
+    },
+  );
 
   if (loading) {
     return <div className="text-center py-12">Loading...</div>;
@@ -41,16 +57,19 @@ export default function ProductDetailPage({
 
   const product = data.product;
 
-  const handleAddToCart = () => {
-    addItem({
-      id: product.id,
-      productId: product.id,
-      name: product.name,
-      price: parseFloat(product.price),
-      quantity,
-      image: product.images?.[0],
-    });
-    alert('Product added to cart!');
+  const handleAddToCart = async () => {
+    try {
+      await addToCart({
+        variables: {
+          input: {
+            productId: product.id,
+            quantity,
+          },
+        },
+      });
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    }
   };
 
   return (
@@ -126,7 +145,7 @@ export default function ProductDetailPage({
           </div>
 
           {/* Rating */}
-          {product.averageRating && (
+          {product.averageRating !== undefined && (
             <div className="flex items-center space-x-2">
               <div className="flex items-center">
                 {[...Array(5)].map((_, i) => (
@@ -141,7 +160,7 @@ export default function ProductDetailPage({
                 ))}
               </div>
               <span className="text-sm text-muted-foreground">
-                {product.averageRating.toFixed(1)} ({product.reviewCount}{' '}
+                {product.averageRating?.toFixed(1)} ({product.reviewCount}{' '}
                 reviews)
               </span>
             </div>
@@ -197,12 +216,12 @@ export default function ProductDetailPage({
             </div>
             <Button
               onClick={handleAddToCart}
-              disabled={product.stock === 0}
+              disabled={product.stock === 0 || addingToCart}
               className="flex-1"
               size="lg"
             >
               <ShoppingCart className="w-5 h-5 mr-2" />
-              Add to Cart
+              {addingToCart ? 'Adding...' : 'Add to Cart'}
             </Button>
             <Button variant="outline" size="lg">
               <Heart className="w-5 h-5" />
