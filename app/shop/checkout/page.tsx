@@ -30,6 +30,7 @@ import {
   GetUserAddressesQuery,
 } from '@/graphql/generated/graphql';
 import { useAuthStore } from '@/store/auth-store';
+import { toast } from 'sonner';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -78,7 +79,7 @@ export default function CheckoutPage() {
       },
       onError: (error) => {
         console.error('Order creation error:', error);
-        alert('Failed to create order. Please try again.');
+        toast.error('Failed to create order. Please try again.');
       },
     },
   );
@@ -108,13 +109,13 @@ export default function CheckoutPage() {
       });
     } catch (error) {
       console.error('Address creation error:', error);
-      alert('Failed to create address');
+      toast.error('Failed to create address');
     }
   };
 
   const handlePlaceOrder = async () => {
     if (!selectedAddressId) {
-      alert('Please select a shipping address');
+      toast.error('Please select a shipping address');
       return;
     }
 

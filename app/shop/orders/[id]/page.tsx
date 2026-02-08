@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { GetOrderDocument, GetOrderQuery } from '@/graphql/generated/graphql';
 import { generateInvoicePDF } from '@/lib/pdf-generator';
 import { use } from 'react';
+import { toast } from 'sonner';
 
 export default function OrderDetailPage({
   params,
@@ -57,7 +58,7 @@ export default function OrderDetailPage({
         await generateInvoicePDF(invoiceData as any);
       } catch (error) {
         console.error('Error generating invoice:', error);
-        alert('Failed to generate invoice. Please try again.');
+        toast.error('Failed to generate invoice. Please try again.');
       }
     }
   };

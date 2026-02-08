@@ -7,14 +7,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import {
   DeleteProductDocument,
   GetProductsDocument,
   GetProductsQuery,
 } from '@/graphql/generated/graphql';
+import { toast } from 'sonner';
 
 export default function AdminProductsPage() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<any>(null);
 
   const { data, loading, refetch } = useQuery<GetProductsQuery>(
     GetProductsDocument,
@@ -30,19 +34,29 @@ export default function AdminProductsPage() {
     },
   );
 
-  const [deleteProduct] = useMutation(DeleteProductDocument, {
-    onCompleted: () => {
-      refetch();
+  const [deleteProduct, { loading: deletingProduct }] = useMutation(
+    DeleteProductDocument,
+    {
+      onCompleted: () => {
+        refetch();
+        setIsDeleteDialogOpen(false);
+        setProductToDelete(null);
+      },
     },
-  });
+  );
 
-  const handleDelete = async (id: string, name: string) => {
-    if (confirm(`Are you sure you want to delete "${name}"?`)) {
+  const handleDeleteClick = (product: any) => {
+    setProductToDelete(product);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (productToDelete) {
       try {
-        await deleteProduct({ variables: { id } });
+        await deleteProduct({ variables: { id: productToDelete.id } });
       } catch (error) {
         console.error('Delete error:', error);
-        alert('Failed to delete product');
+        toast.error('Failed to delete product');
       }
     }
   };
@@ -158,9 +172,7 @@ export default function AdminProductsPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() =>
-                              handleDelete(product.id, product.name)
-                            }
+                            onClick={() => handleDeleteClick(product)}
                           >
                             <Trash2 className="w-4 h-4 text-red-600" />
                           </Button>
@@ -174,6 +186,17 @@ export default function AdminProductsPage() {
           )}
         </CardContent>
       </Card>
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Product"
+        description={`Are you sure you want to delete "${productToDelete?.name}"? This action cannot be undone.`}
+        confirmText="Delete"
+        variant="destructive"
+        isLoading={deletingProduct}
+      />
     </div>
   );
 }

@@ -22,6 +22,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import Link from 'next/link';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import {
   Dialog,
   DialogContent,
@@ -38,6 +39,7 @@ import {
   ToggleUserStatusDocument,
   ToggleUserStatusMutation,
 } from '@/graphql/generated/graphql';
+import { toast } from 'sonner';
 
 export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -59,7 +61,7 @@ export default function UsersPage() {
       },
       onError: (error) => {
         console.error('Delete error:', error);
-        alert('Failed to delete user');
+        toast.error('Failed to delete user');
       },
     },
   );
@@ -72,7 +74,7 @@ export default function UsersPage() {
       },
       onError: (error) => {
         console.error('Toggle status error:', error);
-        alert('Failed to update user status');
+        toast.error('Failed to update user status');
       },
     },
   );
@@ -447,33 +449,16 @@ export default function UsersPage() {
       </Card>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete User</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete {userToDelete?.name}? This action
-              cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setDeleteDialogOpen(false)}
-              disabled={deleting}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDeleteConfirm}
-              disabled={deleting}
-            >
-              {deleting ? 'Deleting...' : 'Delete User'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDialog
+        isOpen={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+        title="Delete User"
+        description={`Are you sure you want to delete ${userToDelete?.name}? This action cannot be undone.`}
+        confirmText="Delete User"
+        variant="destructive"
+        isLoading={deleting}
+      />
     </div>
   );
 }

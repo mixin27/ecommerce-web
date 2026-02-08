@@ -27,6 +27,7 @@ import {
   GetProductsDocument,
   GetProductsQuery,
 } from '@/graphql/generated/graphql';
+import { toast } from 'sonner';
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
@@ -58,11 +59,11 @@ export default function SearchPage() {
     {
       refetchQueries: [{ query: GetMyCartDocument }],
       onCompleted: () => {
-        alert('Product added to cart!');
+        toast.success('Product added to cart!');
       },
       onError: (error) => {
         console.error('Add to cart error:', error);
-        alert('Failed to add to cart');
+        toast.error('Failed to add to cart');
       },
     },
   );

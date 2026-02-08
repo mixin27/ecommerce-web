@@ -33,6 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { toast } from 'sonner';
 
 export default function AdminOrderDetailPage({
   params,
@@ -55,7 +56,7 @@ export default function AdminOrderDetailPage({
       },
       onError: (error) => {
         console.error('Error updating status:', error);
-        alert('Failed to update status');
+        toast.error('Failed to update status');
         setUpdatingStatus(false);
       },
     },

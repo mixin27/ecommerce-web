@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,9 +14,12 @@ import {
   RemoveFromCartDocument,
   UpdateCartItemDocument,
 } from '@/graphql/generated/graphql';
+import { toast } from 'sonner';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 
 export default function CartPage() {
   const router = useRouter();
+  const [isClearCartDialogOpen, setIsClearCartDialogOpen] = useState(false);
 
   const { data, loading, refetch } = useQuery<GetMyCartQuery>(
     GetMyCartDocument,
@@ -32,7 +36,7 @@ export default function CartPage() {
       },
       onError: (error) => {
         console.error('Update cart error:', error);
-        alert('Failed to update cart');
+        toast.error('Failed to update cart');
       },
     },
   );
@@ -45,7 +49,7 @@ export default function CartPage() {
       },
       onError: (error) => {
         console.error('Remove from cart error:', error);
-        alert('Failed to remove item from cart');
+        toast.error('Failed to remove item from cart');
       },
     },
   );
@@ -53,10 +57,11 @@ export default function CartPage() {
   const [clearCart, { loading: clearing }] = useMutation(ClearCartDocument, {
     onCompleted: () => {
       refetch();
+      setIsClearCartDialogOpen(false);
     },
     onError: (error) => {
       console.error('Clear cart error:', error);
-      alert('Failed to clear cart');
+      toast.error('Failed to clear cart');
     },
   });
 
@@ -86,13 +91,15 @@ export default function CartPage() {
     }
   };
 
-  const handleClearCart = async () => {
-    if (confirm('Are you sure you want to clear your cart?')) {
-      try {
-        await clearCart();
-      } catch (error) {
-        console.error('Error clearing cart:', error);
-      }
+  const handleClearCartClick = () => {
+    setIsClearCartDialogOpen(true);
+  };
+
+  const handleClearCartConfirm = async () => {
+    try {
+      await clearCart();
+    } catch (error) {
+      console.error('Error clearing cart:', error);
     }
   };
 
@@ -214,7 +221,7 @@ export default function CartPage() {
           ))}
           <Button
             variant="outline"
-            onClick={handleClearCart}
+            onClick={handleClearCartClick}
             disabled={clearing}
             className="w-full"
           >
@@ -259,6 +266,16 @@ export default function CartPage() {
           </Card>
         </div>
       </div>
+      <ConfirmDialog
+        isOpen={isClearCartDialogOpen}
+        onOpenChange={setIsClearCartDialogOpen}
+        onConfirm={handleClearCartConfirm}
+        title="Clear Cart"
+        description="Are you sure you want to remove all items from your cart?"
+        confirmText="Clear Cart"
+        variant="destructive"
+        isLoading={clearing}
+      />
     </div>
   );
 }

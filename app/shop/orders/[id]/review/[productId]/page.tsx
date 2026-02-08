@@ -17,6 +17,7 @@ import {
   GetProductDocument,
   GetProductQuery,
 } from '@/graphql/generated/graphql';
+import { toast } from 'sonner';
 
 export default function WriteReviewPage({
   params,
@@ -39,12 +40,12 @@ export default function WriteReviewPage({
     CreateReviewDocument,
     {
       onCompleted: () => {
-        alert('Review submitted successfully!');
+        toast.success('Review submitted successfully!');
         router.push(`/shop/orders/${orderId}`);
       },
       onError: (error) => {
         console.error('Review submission error:', error);
-        alert('Failed to submit review. Please try again.');
+        toast.error('Failed to submit review. Please try again.');
       },
     },
   );
@@ -53,7 +54,7 @@ export default function WriteReviewPage({
     e.preventDefault();
 
     if (rating === 0) {
-      alert('Please select a rating');
+      toast.error('Please select a rating');
       return;
     }
 

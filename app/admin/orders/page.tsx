@@ -20,6 +20,8 @@ import {
   OrderStatus,
   UpdateOrderStatusDocument,
 } from '@/graphql/generated/graphql';
+import { toast } from 'sonner';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 
 const ORDER_STATUSES = [
   { value: 'ALL', label: 'All Orders' },
@@ -33,6 +35,11 @@ const ORDER_STATUSES = [
 export default function AdminOrdersPage() {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusUpdateConfirmOpen, setStatusUpdateConfirmOpen] = useState(false);
+  const [pendingStatusUpdate, setPendingStatusUpdate] = useState<{
+    orderId: string;
+    newStatus: string;
+  } | null>(null);
 
   const { data, loading, refetch } = useQuery<GetOrdersQuery>(
     GetOrdersDocument,
@@ -47,24 +54,34 @@ export default function AdminOrdersPage() {
     },
   );
 
-  const [updateOrderStatus] = useMutation(UpdateOrderStatusDocument, {
-    onCompleted: () => {
-      refetch();
+  const [updateOrderStatus, { loading: updatingStatus }] = useMutation(
+    UpdateOrderStatusDocument,
+    {
+      onCompleted: () => {
+        refetch();
+        setStatusUpdateConfirmOpen(false);
+        setPendingStatusUpdate(null);
+      },
     },
-  });
+  );
 
-  const handleStatusUpdate = async (orderId: string, newStatus: string) => {
-    if (confirm(`Update order status to ${newStatus}?`)) {
+  const handleStatusUpdate = (orderId: string, newStatus: string) => {
+    setPendingStatusUpdate({ orderId, newStatus });
+    setStatusUpdateConfirmOpen(true);
+  };
+
+  const handleStatusUpdateConfirm = async () => {
+    if (pendingStatusUpdate) {
       try {
         await updateOrderStatus({
           variables: {
-            id: orderId,
-            input: { status: mapOrderStatus(newStatus) },
+            id: pendingStatusUpdate.orderId,
+            input: { status: mapOrderStatus(pendingStatusUpdate.newStatus) },
           },
         });
       } catch (error) {
         console.error('Error updating order:', error);
-        alert('Failed to update order status');
+        toast.error('Failed to update order status');
       }
     }
   };
@@ -330,6 +347,16 @@ export default function AdminOrdersPage() {
           )}
         </CardContent>
       </Card>
+
+      <ConfirmDialog
+        isOpen={statusUpdateConfirmOpen}
+        onOpenChange={setStatusUpdateConfirmOpen}
+        onConfirm={handleStatusUpdateConfirm}
+        title="Update Order Status"
+        description={`Are you sure you want to update the order status to ${pendingStatusUpdate?.newStatus}?`}
+        confirmText="Update Status"
+        isLoading={updatingStatus}
+      />
     </div>
   );
 }

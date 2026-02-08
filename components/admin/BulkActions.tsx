@@ -11,14 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { toast } from 'sonner';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 
 const BULK_UPDATE_USERS = gql`
   mutation BulkUpdateUsers($userIds: [ID!]!, $input: BulkUpdateUsersInput!) {
@@ -55,27 +49,27 @@ export default function BulkActions({
 
   const [bulkUpdate, { loading: updating }] = useMutation(BULK_UPDATE_USERS, {
     onCompleted: () => {
-      alert('Users updated successfully');
+      toast.success('Users updated successfully');
       onComplete();
       onClearSelection();
       setConfirmDialogOpen(false);
     },
     onError: (error) => {
       console.error('Bulk update error:', error);
-      alert('Failed to update users');
+      toast.error('Failed to update users');
     },
   });
 
   const [bulkDelete, { loading: deleting }] = useMutation(BULK_DELETE_USERS, {
     onCompleted: () => {
-      alert('Users deleted successfully');
+      toast.success('Users deleted successfully');
       onComplete();
       onClearSelection();
       setConfirmDialogOpen(false);
     },
     onError: (error) => {
       console.error('Bulk delete error:', error);
-      alert('Failed to delete users');
+      toast.error('Failed to delete users');
     },
   });
 
@@ -184,30 +178,16 @@ export default function BulkActions({
         </Button>
       </div>
 
-      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm Action</DialogTitle>
-            <DialogDescription>{getActionMessage()}</DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setConfirmDialogOpen(false)}
-              disabled={updating || deleting}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant={action === 'delete' ? 'destructive' : 'default'}
-              onClick={handleConfirm}
-              disabled={updating || deleting}
-            >
-              {updating || deleting ? 'Processing...' : 'Confirm'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ConfirmDialog
+        isOpen={confirmDialogOpen}
+        onOpenChange={setConfirmDialogOpen}
+        onConfirm={handleConfirm}
+        title="Confirm Action"
+        description={getActionMessage()}
+        confirmText="Confirm"
+        variant={action === 'delete' ? 'destructive' : 'default'}
+        isLoading={updating || deleting}
+      />
     </>
   );
 }

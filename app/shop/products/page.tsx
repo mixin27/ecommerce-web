@@ -1,26 +1,27 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useQuery } from "@apollo/client/react";
+import { useState } from 'react';
+import { useQuery } from '@apollo/client/react';
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ShoppingCart, Search, Star } from "lucide-react";
-import Link from "next/link";
-import { useCartStore } from "@/store/cart-store";
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ShoppingCart, Search, Star } from 'lucide-react';
+import Link from 'next/link';
+import { useCartStore } from '@/store/cart-store';
 import {
   GetProductsDocument,
   GetProductsQuery,
-} from "@/graphql/generated/graphql";
+} from '@/graphql/generated/graphql';
+import { toast } from 'sonner';
 
 export default function ShopPage() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const { addItem } = useCartStore();
 
   const { data, loading } = useQuery<GetProductsQuery>(GetProductsDocument, {
@@ -47,7 +48,7 @@ export default function ShopPage() {
       quantity: 1,
       image: product.images?.[0],
     });
-    alert("Product added to cart!");
+    toast.success('Product added to cart!');
   };
 
   return (
@@ -178,7 +179,7 @@ function ProductCard({ product, onAddToCart }: any) {
           disabled={product.stock === 0}
         >
           <ShoppingCart className="w-4 h-4 mr-2" />
-          {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+          {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
         </Button>
       </CardFooter>
     </Card>

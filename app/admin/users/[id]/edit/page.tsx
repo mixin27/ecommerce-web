@@ -32,6 +32,7 @@ import {
   UpdateUserDocument,
   UpdateUserMutation,
 } from '@/graphql/generated/graphql';
+import { toast } from 'sonner';
 
 export default function UserDetailPage({
   params,
@@ -67,7 +68,7 @@ export default function UserDetailPage({
       },
       onError: (error) => {
         console.error('Update error:', error);
-        alert('Failed to update user');
+        toast.error('Failed to update user');
       },
     },
   );
@@ -80,7 +81,7 @@ export default function UserDetailPage({
       },
       onError: (error) => {
         console.error('Create error:', error);
-        alert('Failed to create user');
+        toast.error('Failed to create user');
       },
     },
   );
@@ -112,7 +113,7 @@ export default function UserDetailPage({
 
     if (isNew) {
       if (!formData.password) {
-        alert('Password is required for new users');
+        toast.error('Password is required for new users');
         return;
       }
       input.password = formData.password;

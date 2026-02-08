@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Edit, Trash2, Folder } from 'lucide-react';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import {
   Dialog,
   DialogContent,
@@ -23,6 +24,7 @@ import {
   GetCategoriesQuery,
   UpdateCategoryDocument,
 } from '@/graphql/generated/graphql';
+import { toast } from 'sonner';
 
 export default function AdminCategoriesPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -41,6 +43,8 @@ export default function AdminCategoriesPage() {
     description: '',
     image: '',
   });
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<any>(null);
 
   const { data, loading, refetch } = useQuery<GetCategoriesQuery>(
     GetCategoriesDocument,
@@ -57,11 +61,16 @@ export default function AdminCategoriesPage() {
     },
   );
 
-  const [deleteCategory] = useMutation(DeleteCategoryDocument, {
-    onCompleted: () => {
-      refetch();
+  const [deleteCategory, { loading: deletingCategory }] = useMutation(
+    DeleteCategoryDocument,
+    {
+      onCompleted: () => {
+        refetch();
+        setIsDeleteDialogOpen(false);
+        setCategoryToDelete(null);
+      },
     },
-  });
+  );
 
   const [updateCategory, { loading: updating }] = useMutation(
     UpdateCategoryDocument,
@@ -91,7 +100,7 @@ export default function AdminCategoriesPage() {
       });
     } catch (error) {
       console.error('Create error:', error);
-      alert('Failed to create category');
+      toast.error('Failed to create category');
     }
   };
 
@@ -114,7 +123,7 @@ export default function AdminCategoriesPage() {
       });
     } catch (error) {
       console.error('Update error:', error);
-      alert('Failed to update category');
+      toast.error('Failed to update category');
     }
   };
 
@@ -129,13 +138,18 @@ export default function AdminCategoriesPage() {
     setIsEditDialogOpen(true);
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (confirm(`Are you sure you want to delete "${name}"?`)) {
+  const handleDeleteClick = (category: any) => {
+    setCategoryToDelete(category);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (categoryToDelete) {
       try {
-        await deleteCategory({ variables: { id } });
+        await deleteCategory({ variables: { id: categoryToDelete.id } });
       } catch (error) {
         console.error('Delete error:', error);
-        alert('Failed to delete category');
+        toast.error('Failed to delete category');
       }
     }
   };
@@ -307,6 +321,18 @@ export default function AdminCategoriesPage() {
             </form>
           </DialogContent>
         </Dialog>
+
+        {/* Delete Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={isDeleteDialogOpen}
+          onOpenChange={setIsDeleteDialogOpen}
+          onConfirm={handleDeleteConfirm}
+          title="Delete Category"
+          description={`Are you sure you want to delete "${categoryToDelete?.name}"? This action cannot be undone.`}
+          confirmText="Delete"
+          variant="destructive"
+          isLoading={deletingCategory}
+        />
       </div>
 
       {loading ? (
@@ -369,7 +395,7 @@ export default function AdminCategoriesPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleDelete(category.id, category.name)}
+                      onClick={() => handleDeleteClick(category)}
                     >
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </Button>

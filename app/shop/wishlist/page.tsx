@@ -11,12 +11,13 @@ import { Button } from '@/components/ui/button';
 import { Heart, ShoppingCart, Trash2, Star } from 'lucide-react';
 import Link from 'next/link';
 import {
-    AddToCartDocument,
+  AddToCartDocument,
   GetMyCartDocument,
   GetMyWishlistDocument,
   GetMyWishlistQuery,
   RemoveFromWishlistDocument,
 } from '@/graphql/generated/graphql';
+import { toast } from 'sonner';
 
 export default function WishlistPage() {
   const { data, loading, refetch } = useQuery<GetMyWishlistQuery>(
@@ -31,21 +32,24 @@ export default function WishlistPage() {
       },
       onError: (error) => {
         console.error('Remove from wishlist error:', error);
-        alert('Failed to remove from wishlist');
+        toast.error('Failed to remove from wishlist');
       },
     },
   );
 
-  const [addToCart, { loading: addingToCart }] = useMutation(AddToCartDocument, {
-    refetchQueries: [{ query: GetMyCartDocument }],
-    onCompleted: () => {
-      alert('Product added to cart!');
+  const [addToCart, { loading: addingToCart }] = useMutation(
+    AddToCartDocument,
+    {
+      refetchQueries: [{ query: GetMyCartDocument }],
+      onCompleted: () => {
+        toast.success('Product added to cart!');
+      },
+      onError: (error) => {
+        console.error('Add to cart error:', error);
+        toast.error('Failed to add to cart');
+      },
     },
-    onError: (error) => {
-      console.error('Add to cart error:', error);
-      alert('Failed to add to cart');
-    },
-  });
+  );
 
   const handleRemove = async (productId: string) => {
     try {

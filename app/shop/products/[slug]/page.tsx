@@ -13,6 +13,7 @@ import {
   GetProductDocument,
   GetProductQuery,
 } from '@/graphql/generated/graphql';
+import { toast } from 'sonner';
 
 export default function ProductDetailPage({
   params,
@@ -31,11 +32,11 @@ export default function ProductDetailPage({
     {
       refetchQueries: [{ query: GetMyCartDocument }],
       onCompleted: () => {
-        alert('Product added to cart!');
+        toast.success('Product added to cart!');
       },
       onError: (error) => {
         console.error('Add to cart error:', error);
-        alert('Failed to add product to cart');
+        toast.error('Failed to add product to cart');
       },
     },
   );

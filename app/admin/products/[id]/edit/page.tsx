@@ -24,6 +24,7 @@ import {
   GetProductQuery,
   UpdateProductDocument,
 } from '@/graphql/generated/graphql';
+import { toast } from 'sonner';
 
 export default function ProductFormPage({
   params,
@@ -120,7 +121,7 @@ export default function ProductFormPage({
       }
     } catch (error) {
       console.error('Save error:', error);
-      alert(`Failed to ${isEdit ? 'update' : 'create'} product`);
+      toast.error(`Failed to ${isEdit ? 'update' : 'create'} product`);
     }
   };
 
